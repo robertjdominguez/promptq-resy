@@ -1,0 +1,19 @@
+kind: Subgraph
+version: v2
+definition:
+  name: maitre_d
+  generator:
+    rootPath: .
+    namingConvention: snake_case
+  includePaths:
+    - metadata
+  envMapping:
+    MAITRE_D_BOOKING_DATA_AUTHORIZATION_HEADER:
+      fromEnv: MAITRE_D_BOOKING_DATA_AUTHORIZATION_HEADER
+    MAITRE_D_BOOKING_DATA_READ_URL:
+      fromEnv: MAITRE_D_BOOKING_DATA_READ_URL
+    MAITRE_D_BOOKING_DATA_WRITE_URL:
+      fromEnv: MAITRE_D_BOOKING_DATA_WRITE_URL
+  connectors:
+    - path: connector/booking_data/connector.yaml
+      connectorLinkName: booking_data

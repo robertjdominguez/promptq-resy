@@ -1,0 +1,175 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: public_users
+  fields:
+    - name: auth_token
+      type: text!
+    - name: email
+      type: text!
+    - name: id
+      type: uuid!
+    - name: payment_id
+      type: text!
+  graphql:
+    typeName: public_users
+    inputTypeName: public_users_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_data
+      dataConnectorObjectType: public.users
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: public_users
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - auth_token
+          - email
+          - id
+          - payment_id
+    - role: user
+      output:
+        allowedFields:
+          - auth_token
+          - email
+          - id
+          - payment_id
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: public_users_bool_exp
+  operand:
+    object:
+      type: public_users
+      comparableFields:
+        - fieldName: auth_token
+          booleanExpressionType: text_bool_exp
+        - fieldName: email
+          booleanExpressionType: text_bool_exp
+        - fieldName: id
+          booleanExpressionType: uuid_bool_exp
+        - fieldName: payment_id
+          booleanExpressionType: text_bool_exp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: public_users_bool_exp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: public_users_agg_exp
+  operand:
+    object:
+      aggregatedType: public_users
+      aggregatableFields:
+        - fieldName: auth_token
+          aggregateExpression: text_agg_exp
+        - fieldName: email
+          aggregateExpression: text_agg_exp
+        - fieldName: id
+          aggregateExpression: uuid_agg_exp
+        - fieldName: payment_id
+          aggregateExpression: text_agg_exp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: public_users_agg_exp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: public_users_order_by_exp
+  operand:
+    object:
+      orderedType: public_users
+      orderableFields:
+        - fieldName: auth_token
+          orderByExpression: text_order_by_exp
+        - fieldName: email
+          orderByExpression: text_order_by_exp
+        - fieldName: id
+          orderByExpression: uuid_order_by_exp
+        - fieldName: payment_id
+          orderByExpression: text_order_by_exp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: public_users_order_by_exp
+
+---
+kind: Model
+version: v2
+definition:
+  name: public_users
+  objectType: public_users
+  source:
+    dataConnectorName: booking_data
+    collection: public.users
+  filterExpressionType: public_users_bool_exp
+  aggregateExpression: public_users_agg_exp
+  orderByExpression: public_users_order_by_exp
+  graphql:
+    selectMany:
+      queryRootField: public_users
+      subscription:
+        rootField: public_users
+    selectUniques:
+      - queryRootField: public_users_by_id
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: public_users_by_id
+    filterInputTypeName: public_users_filter_input
+    aggregate:
+      queryRootField: public_users_aggregate
+      subscription:
+        rootField: public_users_aggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: public_users
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+    - role: user
+      select:
+        filter:
+          fieldComparison:
+            field: id
+            operator: _eq
+            value:
+              sessionVariable: x-hasura-user-id
+
+---
+kind: Relationship
+version: v1
+definition:
+  name: reservations
+  sourceType: public_users
+  target:
+    model:
+      name: public_reservations
+      relationshipType: Array
+  mapping:
+    - source:
+        fieldPath:
+          - fieldName: id
+      target:
+        modelField:
+          - fieldName: user_id

@@ -1,0 +1,254 @@
+kind: DataConnectorLink
+version: v1
+definition:
+  name: booking_data
+  url:
+    readWriteUrls:
+      read:
+        valueFromEnv: MAITRE_D_BOOKING_DATA_READ_URL
+      write:
+        valueFromEnv: MAITRE_D_BOOKING_DATA_WRITE_URL
+  headers:
+    Authorization:
+      valueFromEnv: MAITRE_D_BOOKING_DATA_AUTHORIZATION_HEADER
+  schema:
+    version: v0.1
+    schema:
+      scalar_types:
+        text:
+          representation:
+            type: string
+          aggregate_functions:
+            max:
+              result_type:
+                name: text
+                type: named
+            min:
+              result_type:
+                name: text
+                type: named
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _gte:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _ilike:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _in:
+              type: in
+            _iregex:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _like:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _lt:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _lte:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _neq:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _nilike:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _niregex:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _nlike:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _nregex:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+            _regex:
+              type: custom
+              argument_type:
+                name: text
+                type: named
+        uuid:
+          representation:
+            type: string
+          aggregate_functions:
+            max:
+              result_type:
+                name: uuid
+                type: named
+            min:
+              result_type:
+                name: uuid
+                type: named
+          comparison_operators:
+            _eq:
+              type: equal
+            _gt:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _gte:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _ilike:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _in:
+              type: in
+            _iregex:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _like:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _lt:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _lte:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _neq:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _nilike:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _niregex:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _nlike:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _nregex:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+            _regex:
+              type: custom
+              argument_type:
+                name: uuid
+                type: named
+      object_types:
+        public.reservations:
+          fields:
+            id:
+              type:
+                name: uuid
+                type: named
+              arguments: {}
+            notes:
+              type:
+                type: nullable
+                underlying_type:
+                  name: text
+                  type: named
+              arguments: {}
+            user_id:
+              type:
+                name: uuid
+                type: named
+              arguments: {}
+            venue_id:
+              type:
+                name: text
+                type: named
+              arguments: {}
+        public.users:
+          fields:
+            auth_token:
+              type:
+                name: text
+                type: named
+              arguments: {}
+            email:
+              type:
+                name: text
+                type: named
+              arguments: {}
+            id:
+              type:
+                name: uuid
+                type: named
+              arguments: {}
+            payment_id:
+              type:
+                name: text
+                type: named
+              arguments: {}
+      collections:
+        - name: public.reservations
+          arguments: {}
+          type: public.reservations
+          uniqueness_constraints:
+            id:
+              unique_columns:
+                - id
+          foreign_keys: {}
+        - name: public.users
+          arguments: {}
+          type: public.users
+          uniqueness_constraints:
+            id:
+              unique_columns:
+                - id
+          foreign_keys: {}
+      functions: []
+      procedures: []
+    capabilities:
+      version: 0.1.6
+      capabilities:
+        query:
+          aggregates: {}
+          variables: {}
+        mutation: {}

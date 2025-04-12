@@ -1,0 +1,18 @@
+kind: Connector
+version: v2
+definition:
+  name: booking_data
+  subgraph: maitre_d
+  source: hasura/postgres-promptql:v1.0.0
+  context: .
+  envMapping:
+    HASURA_SERVICE_TOKEN_SECRET:
+      fromEnv: MAITRE_D_BOOKING_DATA_HASURA_SERVICE_TOKEN_SECRET
+    JDBC_SCHEMAS:
+      fromEnv: MAITRE_D_BOOKING_DATA_JDBC_SCHEMAS
+    JDBC_URL:
+      fromEnv: MAITRE_D_BOOKING_DATA_JDBC_URL
+    OTEL_EXPORTER_OTLP_ENDPOINT:
+      fromEnv: MAITRE_D_BOOKING_DATA_OTEL_EXPORTER_OTLP_ENDPOINT
+    OTEL_SERVICE_NAME:
+      fromEnv: MAITRE_D_BOOKING_DATA_OTEL_SERVICE_NAME

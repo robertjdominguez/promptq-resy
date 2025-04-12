@@ -1,0 +1,157 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: public_reservations
+  fields:
+    - name: id
+      type: uuid!
+    - name: notes
+      type: text
+    - name: user_id
+      type: uuid!
+    - name: venue_id
+      type: text!
+  graphql:
+    typeName: public_reservations
+    inputTypeName: public_reservations_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_data
+      dataConnectorObjectType: public.reservations
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: public_reservations
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - id
+          - notes
+          - user_id
+          - venue_id
+    - role: user
+      output:
+        allowedFields:
+          - id
+          - notes
+          - user_id
+          - venue_id
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: public_reservations_bool_exp
+  operand:
+    object:
+      type: public_reservations
+      comparableFields:
+        - fieldName: id
+          booleanExpressionType: uuid_bool_exp
+        - fieldName: notes
+          booleanExpressionType: text_bool_exp
+        - fieldName: user_id
+          booleanExpressionType: uuid_bool_exp
+        - fieldName: venue_id
+          booleanExpressionType: text_bool_exp
+      comparableRelationships: []
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: public_reservations_bool_exp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: public_reservations_agg_exp
+  operand:
+    object:
+      aggregatedType: public_reservations
+      aggregatableFields:
+        - fieldName: id
+          aggregateExpression: uuid_agg_exp
+        - fieldName: notes
+          aggregateExpression: text_agg_exp
+        - fieldName: user_id
+          aggregateExpression: uuid_agg_exp
+        - fieldName: venue_id
+          aggregateExpression: text_agg_exp
+  count:
+    enable: true
+  graphql:
+    selectTypeName: public_reservations_agg_exp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: public_reservations_order_by_exp
+  operand:
+    object:
+      orderedType: public_reservations
+      orderableFields:
+        - fieldName: id
+          orderByExpression: uuid_order_by_exp
+        - fieldName: notes
+          orderByExpression: text_order_by_exp
+        - fieldName: user_id
+          orderByExpression: uuid_order_by_exp
+        - fieldName: venue_id
+          orderByExpression: text_order_by_exp
+      orderableRelationships: []
+  graphql:
+    expressionTypeName: public_reservations_order_by_exp
+
+---
+kind: Model
+version: v2
+definition:
+  name: public_reservations
+  objectType: public_reservations
+  source:
+    dataConnectorName: booking_data
+    collection: public.reservations
+  filterExpressionType: public_reservations_bool_exp
+  aggregateExpression: public_reservations_agg_exp
+  orderByExpression: public_reservations_order_by_exp
+  graphql:
+    selectMany:
+      queryRootField: public_reservations
+      subscription:
+        rootField: public_reservations
+    selectUniques:
+      - queryRootField: public_reservations_by_id
+        uniqueIdentifier:
+          - id
+        subscription:
+          rootField: public_reservations_by_id
+    filterInputTypeName: public_reservations_filter_input
+    aggregate:
+      queryRootField: public_reservations_aggregate
+      subscription:
+        rootField: public_reservations_aggregate
+
+---
+kind: ModelPermissions
+version: v1
+definition:
+  modelName: public_reservations
+  permissions:
+    - role: admin
+      select:
+        filter: null
+        allowSubscriptions: true
+    - role: user
+      select:
+        filter:
+          fieldComparison:
+            field: user_id
+            operator: _eq
+            value:
+              sessionVariable: x-hasura-user-id

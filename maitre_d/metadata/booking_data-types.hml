@@ -1,0 +1,218 @@
+---
+kind: ScalarType
+version: v1
+definition:
+  name: uuid
+  graphql:
+    typeName: uuid
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: uuid_bool_exp
+  operand:
+    scalar:
+      type: uuid
+      comparisonOperators:
+        - name: _eq
+          argumentType: uuid!
+        - name: _gt
+          argumentType: uuid!
+        - name: _gte
+          argumentType: uuid!
+        - name: _ilike
+          argumentType: uuid!
+        - name: _in
+          argumentType: "[uuid!]!"
+        - name: _iregex
+          argumentType: uuid!
+        - name: _like
+          argumentType: uuid!
+        - name: _lt
+          argumentType: uuid!
+        - name: _lte
+          argumentType: uuid!
+        - name: _neq
+          argumentType: uuid!
+        - name: _nilike
+          argumentType: uuid!
+        - name: _niregex
+          argumentType: uuid!
+        - name: _nlike
+          argumentType: uuid!
+        - name: _nregex
+          argumentType: uuid!
+        - name: _regex
+          argumentType: uuid!
+      dataConnectorOperatorMapping:
+        - dataConnectorName: booking_data
+          dataConnectorScalarType: uuid
+          operatorMapping: {}
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: uuid_bool_exp
+
+---
+kind: DataConnectorScalarRepresentation
+version: v1
+definition:
+  dataConnectorName: booking_data
+  dataConnectorScalarType: uuid
+  representation: uuid
+  graphql:
+    comparisonExpressionTypeName: uuid_comparison_exp
+
+---
+kind: ScalarType
+version: v1
+definition:
+  name: text
+  graphql:
+    typeName: text
+
+---
+kind: BooleanExpressionType
+version: v1
+definition:
+  name: text_bool_exp
+  operand:
+    scalar:
+      type: text
+      comparisonOperators:
+        - name: _eq
+          argumentType: text!
+        - name: _gt
+          argumentType: text!
+        - name: _gte
+          argumentType: text!
+        - name: _ilike
+          argumentType: text!
+        - name: _in
+          argumentType: "[text!]!"
+        - name: _iregex
+          argumentType: text!
+        - name: _like
+          argumentType: text!
+        - name: _lt
+          argumentType: text!
+        - name: _lte
+          argumentType: text!
+        - name: _neq
+          argumentType: text!
+        - name: _nilike
+          argumentType: text!
+        - name: _niregex
+          argumentType: text!
+        - name: _nlike
+          argumentType: text!
+        - name: _nregex
+          argumentType: text!
+        - name: _regex
+          argumentType: text!
+      dataConnectorOperatorMapping:
+        - dataConnectorName: booking_data
+          dataConnectorScalarType: text
+          operatorMapping: {}
+  logicalOperators:
+    enable: true
+  isNull:
+    enable: true
+  graphql:
+    typeName: text_bool_exp
+
+---
+kind: DataConnectorScalarRepresentation
+version: v1
+definition:
+  dataConnectorName: booking_data
+  dataConnectorScalarType: text
+  representation: text
+  graphql:
+    comparisonExpressionTypeName: text_comparison_exp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: uuid_agg_exp
+  operand:
+    scalar:
+      aggregatedType: uuid
+      aggregationFunctions:
+        - name: max
+          returnType: uuid!
+        - name: min
+          returnType: uuid!
+      dataConnectorAggregationFunctionMapping:
+        - dataConnectorName: booking_data
+          dataConnectorScalarType: uuid
+          functionMapping:
+            max:
+              name: max
+            min:
+              name: min
+  count:
+    enable: true
+  countDistinct:
+    enable: true
+  graphql:
+    selectTypeName: uuid_agg_exp
+
+---
+kind: AggregateExpression
+version: v1
+definition:
+  name: text_agg_exp
+  operand:
+    scalar:
+      aggregatedType: text
+      aggregationFunctions:
+        - name: max
+          returnType: text!
+        - name: min
+          returnType: text!
+      dataConnectorAggregationFunctionMapping:
+        - dataConnectorName: booking_data
+          dataConnectorScalarType: text
+          functionMapping:
+            max:
+              name: max
+            min:
+              name: min
+  count:
+    enable: true
+  countDistinct:
+    enable: true
+  graphql:
+    selectTypeName: text_agg_exp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: uuid_order_by_exp
+  operand:
+    scalar:
+      orderedType: uuid
+      enableOrderByDirections:
+        enableAll: true
+  graphql:
+    expressionTypeName: uuid_order_by_exp
+
+---
+kind: OrderByExpression
+version: v1
+definition:
+  name: text_order_by_exp
+  operand:
+    scalar:
+      orderedType: text
+      enableOrderByDirections:
+        enableAll: true
+  graphql:
+    expressionTypeName: text_order_by_exp
+
