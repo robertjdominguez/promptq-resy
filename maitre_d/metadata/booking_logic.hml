@@ -30,6 +30,12 @@ definition:
             _eq:
               type: equal
       object_types:
+        CityCode:
+          fields:
+            code:
+              type:
+                name: String
+                type: named
         Coordinates:
           fields:
             lat:
@@ -52,6 +58,17 @@ definition:
                 type: named
           result_type:
             name: Coordinates
+            type: named
+        - name: getCityCode
+          description: This function takes a pair of coordinates, and returns a city code from the Resy API.
+          arguments:
+            coordinates:
+              description: '- The coordinates to get the city code for'
+              type:
+                name: Coordinates
+                type: named
+          result_type:
+            name: CityCode
             type: named
       procedures: []
     capabilities:

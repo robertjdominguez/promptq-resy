@@ -1,0 +1,61 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: city_code
+  fields:
+    - name: code
+      type: String!
+  graphql:
+    typeName: city_code
+    inputTypeName: city_code_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: CityCode
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: city_code
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - code
+    - role: user
+      output:
+        allowedFields:
+          - code
+
+---
+kind: Command
+version: v1
+definition:
+  name: get_city_code
+  outputType: city_code!
+  arguments:
+    - name: coordinates
+      type: coordinates!
+      description: "- The coordinates to get the city code for"
+  source:
+    dataConnectorName: booking_logic
+    dataConnectorCommand:
+      function: getCityCode
+  graphql:
+    rootFieldName: get_city_code
+    rootFieldKind: Query
+  description: This function takes a pair of coordinates, and returns a city code
+    from the Resy API.
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: get_city_code
+  permissions:
+    - role: admin
+      allowExecution: true
+    - role: user
+      allowExecution: true
+

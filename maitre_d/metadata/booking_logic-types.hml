@@ -3,18 +3,18 @@ kind: DataConnectorScalarRepresentation
 version: v1
 definition:
   dataConnectorName: booking_logic
-  dataConnectorScalarType: String
-  representation: String
+  dataConnectorScalarType: Float
+  representation: Float
   graphql:
-    comparisonExpressionTypeName: string_comparison_exp_1
+    comparisonExpressionTypeName: float_comparison_exp
 
 ---
 kind: DataConnectorScalarRepresentation
 version: v1
 definition:
   dataConnectorName: booking_logic
-  dataConnectorScalarType: Float
-  representation: Float
+  dataConnectorScalarType: String
+  representation: String
   graphql:
-    comparisonExpressionTypeName: float_comparison_exp
+    comparisonExpressionTypeName: string_comparison_exp
 
