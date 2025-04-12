@@ -36,7 +36,7 @@ export async function insertUser(email: string, auth_token: string, payment_id: 
       {
         sub: userId,
         email,
-        "https://claims.jwt.hasura.io": {
+        "claims.jwt.hasura.io": {
           "x-hasura-user-id": userId,
           "x-hasura-default-role": "user",
           "x-hasura-allowed-roles": ["user"],
