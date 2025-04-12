@@ -1,0 +1,287 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: query_info
+  fields:
+    - name: day
+      type: String!
+    - name: limit
+      type: Float
+    - name: location_id
+      type: String!
+    - name: party_size
+      type: Float!
+    - name: time_filter
+      type: String
+    - name: url_slug
+      type: String
+  graphql:
+    typeName: query_info
+    inputTypeName: query_info_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: QueryInfo
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: query_info
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - day
+          - limit
+          - location_id
+          - party_size
+          - time_filter
+          - url_slug
+    - role: user
+      output:
+        allowedFields:
+          - day
+          - limit
+          - location_id
+          - party_size
+          - time_filter
+          - url_slug
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: venue_id
+  fields:
+    - name: resy
+      type: Float!
+  graphql:
+    typeName: venue_id
+    inputTypeName: venue_id_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: Venue_id
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: venue_id
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - resy
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: venue_group
+  fields:
+    - name: id
+      type: Float!
+    - name: name
+      type: String!
+    - name: venues
+      type: "[Float!]!"
+  graphql:
+    typeName: venue_group
+    inputTypeName: venue_group_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: VenueGroup
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: venue_group
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - id
+          - name
+          - venues
+    - role: user
+      output:
+        allowedFields:
+          - id
+          - name
+          - venues
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: venue
+  fields:
+    - name: average_bill_size
+      type: Float!
+    - name: currency_symbol
+      type: String!
+    - name: hospitality_included
+      type: Float!
+    - name: id
+      type: venue_id!
+    - name: is_gdc
+      type: Float!
+    - name: is_global_dining_access
+      type: Boolean!
+    - name: is_global_dining_access_only
+      type: Boolean!
+    - name: name
+      type: String!
+    - name: price_range
+      type: Float!
+    - name: requires_reservation_transfers
+      type: Float!
+    - name: resy_select
+      type: Float!
+    - name: type
+      type: String!
+    - name: url_slug
+      type: String!
+    - name: venue_group
+      type: venue_group!
+  graphql:
+    typeName: venue
+    inputTypeName: venue_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: Venue
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: venue
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - average_bill_size
+          - currency_symbol
+          - hospitality_included
+          - id
+          - is_gdc
+          - is_global_dining_access
+          - is_global_dining_access_only
+          - name
+          - price_range
+          - requires_reservation_transfers
+          - resy_select
+          - type
+          - url_slug
+          - venue_group
+    - role: user
+      output:
+        allowedFields:
+          - average_bill_size
+          - currency_symbol
+          - hospitality_included
+          - id
+          - is_gdc
+          - is_global_dining_access
+          - is_global_dining_access_only
+          - name
+          - price_range
+          - requires_reservation_transfers
+          - resy_select
+          - type
+          - url_slug
+          - venue_group
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: resy_suggestion_result
+  fields:
+    - name: venue
+      type: venue!
+  graphql:
+    typeName: resy_suggestion_result
+    inputTypeName: resy_suggestion_result_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: ResySuggestionResult
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: resy_suggestion_result
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - venue
+    - role: user
+      output:
+        allowedFields:
+          - venue
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: resy_suggestion_response
+  fields:
+    - name: query
+      type: query_info!
+    - name: results
+      type: "[resy_suggestion_result!]!"
+  graphql:
+    typeName: resy_suggestion_response
+    inputTypeName: resy_suggestion_response_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: ResySuggestionResponse
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: resy_suggestion_response
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - query
+          - results
+    - role: user
+      output:
+        allowedFields:
+          - query
+          - results
+
+---
+kind: Command
+version: v1
+definition:
+  name: get_restaurants
+  outputType: resy_suggestion_response!
+  source:
+    dataConnectorName: booking_logic
+    dataConnectorCommand:
+      function: getRestaurants
+  graphql:
+    rootFieldName: get_restaurants
+    rootFieldKind: Query
+  description: This function takes in a city code, the current date, and a party
+    size to show the list of restaurants with availability.
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: get_restaurants
+  permissions:
+    - role: admin
+      allowExecution: true
+    - role: user
+      allowExecution: true
+
