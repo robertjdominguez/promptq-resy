@@ -6,3 +6,6 @@ definition:
     rootPath: .
   includePaths:
     - metadata
+  envMapping:
+    MAITRE_D_USER_LOGIC_JWT_SECRET:
+      fromEnv: MAITRE_D_USER_LOGIC_JWT_SECRET
