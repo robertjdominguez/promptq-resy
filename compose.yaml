@@ -1,5 +1,6 @@
 include:
   - path: maitre_d/connector/booking_data/compose.yaml
+  - path: maitre_d/connector/user_logic/compose.yaml
 services:
   engine:
     build:

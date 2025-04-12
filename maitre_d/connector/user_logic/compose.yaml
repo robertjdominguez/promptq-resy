@@ -1,0 +1,15 @@
+services:
+  maitre_d_user_logic:
+    build:
+      context: .
+      dockerfile: .hasura-connector/Dockerfile
+    environment:
+      DATABASE_URL: $MAITRE_D_USER_LOGIC_DATABASE_URL
+      HASURA_SERVICE_TOKEN_SECRET: $MAITRE_D_USER_LOGIC_HASURA_SERVICE_TOKEN_SECRET
+      JWT_SECRET: $MAITRE_D_USER_LOGIC_JWT_SECRET
+      OTEL_EXPORTER_OTLP_ENDPOINT: $MAITRE_D_USER_LOGIC_OTEL_EXPORTER_OTLP_ENDPOINT
+      OTEL_SERVICE_NAME: $MAITRE_D_USER_LOGIC_OTEL_SERVICE_NAME
+    extra_hosts:
+      - local.hasura.dev:host-gateway
+    ports:
+      - 9004:8080
