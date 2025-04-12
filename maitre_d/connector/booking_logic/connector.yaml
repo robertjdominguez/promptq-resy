@@ -1,0 +1,16 @@
+kind: Connector
+version: v2
+definition:
+  name: booking_logic
+  subgraph: maitre_d
+  source: hasura/nodejs:v1.13.0
+  context: .
+  envMapping:
+    HASURA_CONNECTOR_PORT:
+      fromEnv: MAITRE_D_BOOKING_LOGIC_HASURA_CONNECTOR_PORT
+    HASURA_SERVICE_TOKEN_SECRET:
+      fromEnv: MAITRE_D_BOOKING_LOGIC_HASURA_SERVICE_TOKEN_SECRET
+    OTEL_EXPORTER_OTLP_ENDPOINT:
+      fromEnv: MAITRE_D_BOOKING_LOGIC_OTEL_EXPORTER_OTLP_ENDPOINT
+    OTEL_SERVICE_NAME:
+      fromEnv: MAITRE_D_BOOKING_LOGIC_OTEL_SERVICE_NAME

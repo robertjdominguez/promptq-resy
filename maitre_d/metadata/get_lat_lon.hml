@@ -1,0 +1,65 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: coordinates
+  fields:
+    - name: lat
+      type: Float!
+    - name: lon
+      type: Float!
+  graphql:
+    typeName: coordinates
+    inputTypeName: coordinates_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: Coordinates
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: coordinates
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - lat
+          - lon
+    - role: user
+      output:
+        allowedFields:
+          - lat
+          - lon
+
+---
+kind: Command
+version: v1
+definition:
+  name: get_lat_lon
+  outputType: coordinates!
+  arguments:
+    - name: city
+      type: String!
+      description: "- The city to get the coordinates for"
+  source:
+    dataConnectorName: booking_logic
+    dataConnectorCommand:
+      function: getLatLon
+  graphql:
+    rootFieldName: get_lat_lon
+    rootFieldKind: Query
+  description: This function fetches the coordinates of a city using the OpenCage
+    Geocoding API.
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: get_lat_lon
+  permissions:
+    - role: admin
+      allowExecution: true
+    - role: user
+      allowExecution: true
+

@@ -1,0 +1,13 @@
+services:
+  maitre_d_booking_logic:
+    build:
+      context: .
+      dockerfile: .hasura-connector/Dockerfile
+    environment:
+      HASURA_SERVICE_TOKEN_SECRET: $MAITRE_D_BOOKING_LOGIC_HASURA_SERVICE_TOKEN_SECRET
+      OTEL_EXPORTER_OTLP_ENDPOINT: $MAITRE_D_BOOKING_LOGIC_OTEL_EXPORTER_OTLP_ENDPOINT
+      OTEL_SERVICE_NAME: $MAITRE_D_BOOKING_LOGIC_OTEL_SERVICE_NAME
+    extra_hosts:
+      - local.hasura.dev:host-gateway
+    ports:
+      - 4807:8080
