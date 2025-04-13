@@ -22,6 +22,8 @@ definition:
       type: String!
     - name: url_slug
       type: String!
+    - name: description
+      type: String!
   graphql:
     typeName: restaurant
     inputTypeName: restaurant_input
@@ -56,6 +58,9 @@ definition:
         url_slug:
           column:
             name: urlSlug
+        description:
+          column:
+            name: description
 
 ---
 kind: TypePermissions
@@ -75,6 +80,7 @@ definition:
           - total_ratings
           - type
           - url_slug
+          - description
     - role: user
       output:
         allowedFields:
@@ -87,6 +93,7 @@ definition:
           - total_ratings
           - type
           - url_slug
+          - description
 
 ---
 kind: Command

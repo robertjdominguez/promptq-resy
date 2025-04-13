@@ -48,6 +48,10 @@ definition:
                 type: named
         Restaurant:
           fields:
+            description:
+              type:
+                name: String
+                type: named
             id:
               type:
                 name: Float

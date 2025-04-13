@@ -13,6 +13,7 @@ interface Restaurant {
   id: number;
   name: string;
   type: string;
+  description: string;
   priceRange: number;
   neighborhood: string;
   rating: number;
@@ -36,6 +37,7 @@ interface ResySuggestionResponse {
       rating?: number;
       total_ratings?: number;
       url_slug: string;
+      default_template?: string;
       location?: {
         neighborhood?: string;
       };
@@ -52,6 +54,19 @@ interface ResySuggestionResponse {
       };
     };
   }>;
+  templates?: Record<
+    string,
+    {
+      content?: {
+        "en-us"?: {
+          about?: {
+            body?: string;
+          };
+        };
+      };
+      images?: string[];
+    }
+  >;
 }
 
 interface CityCode {
@@ -175,6 +190,7 @@ export async function getRestaurants(city_code: string, date: string, party_size
   // Transform the complex API response into a simplified restaurant array
   return data.results.map((item) => {
     const venue = item.venue;
+    console.log(`venue: ${JSON.stringify(venue)}`);
     let imageUrl: string | undefined;
 
     // Try to get first image if available
@@ -183,10 +199,16 @@ export async function getRestaurants(city_code: string, date: string, party_size
       imageUrl = venue.responsive_images.urls[firstImageKey]?.["1:1"]?.["400"];
     }
 
+    // Get the default template
+    const template = venue.default_template || "";
+
+    console.log(`template: ${template}`);
+
     return {
       id: venue.id.resy,
       name: venue.name,
       type: venue.type,
+      description: data.templates?.[template]?.content?.["en-us"]?.about?.body || "",
       priceRange: venue.price_range,
       neighborhood: venue.location?.neighborhood || "",
       rating: venue.rating || 0,
