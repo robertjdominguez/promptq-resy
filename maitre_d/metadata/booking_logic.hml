@@ -46,22 +46,22 @@ definition:
               type:
                 name: Float
                 type: named
-        Restaurant:
+        VenueInfo:
           fields:
             description:
-              type:
-                name: String
-                type: named
-            id:
-              type:
-                name: Float
-                type: named
-            imageUrl:
               type:
                 type: nullable
                 underlying_type:
                   name: String
                   type: named
+            id:
+              type:
+                name: Float
+                type: named
+            location:
+              type:
+                name: VenueInfo_location
+                type: named
             name:
               type:
                 name: String
@@ -78,6 +78,12 @@ definition:
               type:
                 name: Float
                 type: named
+            slots:
+              type:
+                element_type:
+                  name: array
+                  type: named
+                type: array
             totalRatings:
               type:
                 name: Float
@@ -86,7 +92,31 @@ definition:
               type:
                 name: String
                 type: named
-            urlSlug:
+        VenueInfo_location:
+          fields:
+            lat:
+              type:
+                name: Float
+                type: named
+            lon:
+              type:
+                name: Float
+                type: named
+        array:
+          fields:
+            booking_token:
+              type:
+                name: String
+                type: named
+            end:
+              type:
+                name: String
+                type: named
+            start:
+              type:
+                name: String
+                type: named
+            type:
               type:
                 name: String
                 type: named
@@ -133,7 +163,7 @@ definition:
                 type: named
           result_type:
             element_type:
-              name: Restaurant
+              name: VenueInfo
               type: named
             type: array
       procedures: []

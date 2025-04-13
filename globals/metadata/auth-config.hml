@@ -14,3 +14,10 @@ definition:
           algorithm: HS256
           key:
             valueFromEnv: MAITRE_D_USER_LOGIC_JWT_SECRET
+# kind: AuthConfig
+# version: v3
+# definition:
+#   mode:
+#     noAuth:
+#       role: admin
+#       sessionVariables: {}

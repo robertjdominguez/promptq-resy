@@ -3,79 +3,29 @@ interface Coordinates {
   lon: number;
 }
 
-interface PartyDetails {
-  partySize: string;
-  date: string;
-  cityCode: string;
-}
-
-interface Restaurant {
+type VenueInfo = {
   id: number;
   name: string;
   type: string;
-  description: string;
+  description: string | null;
   priceRange: number;
   neighborhood: string;
   rating: number;
   totalRatings: number;
-  urlSlug: string;
-  imageUrl?: string;
-}
-
-interface ResySuggestionResponse {
-  query: {
-    location_id: string;
-    day: string;
-    party_size: string;
+  location: {
+    lat: number;
+    lon: number;
   };
-  results: Array<{
-    venue: {
-      id: { resy: number };
-      name: string;
-      type: string;
-      price_range: number;
-      rating?: number;
-      total_ratings?: number;
-      url_slug: string;
-      default_template?: string;
-      location?: {
-        neighborhood?: string;
-      };
-      responsive_images?: {
-        urls?: Record<
-          string,
-          {
-            "1:1"?: {
-              "400"?: string;
-            };
-          }
-        >;
-        file_names?: string[];
-      };
-    };
+  slots: Array<{
+    start: string;
+    end: string;
+    type: string;
+    booking_token: string;
   }>;
-  templates?: Record<
-    string,
-    {
-      content?: {
-        "en-us"?: {
-          about?: {
-            body?: string;
-          };
-        };
-      };
-      images?: string[];
-    }
-  >;
-}
+};
 
 interface CityCode {
   code: string;
-}
-
-interface ResyCity {
-  query: any;
-  results: any;
 }
 
 /**
@@ -141,9 +91,9 @@ export async function getCityCode(coordinates: Coordinates): Promise<CityCode> {
  * @param {string} cityCode - The city code to get the restaurants for
  * @param {string} date - The date to get the restaurants for in YYYY-MM-DD format
  * @param {number} party_size - The party size to get the restaurants for
- * @returns {Promise<Restaurant[]>} - A promise that resolves to an array of restaurants
+ * @returns {Promise<VenuInfo[]>} - A promise that resolves to an array of restaurants with only the necessary information
  */
-export async function getRestaurants(city_code: string, date: string, party_size: string): Promise<Restaurant[]> {
+export async function getRestaurants(city_code: string, date: string, party_size: string): Promise<VenueInfo[]> {
   // Check for environment variables
   const requiredEnvVars = ["RESY_API_KEY", "RESY_COOKIE", "RESY_AUTH_TOKEN"];
   for (const envVar of requiredEnvVars) {
@@ -185,36 +135,37 @@ export async function getRestaurants(city_code: string, date: string, party_size
     throw new Error(`Failed to fetch: ${res.status}`);
   }
 
-  const data = (await res.json()) as ResySuggestionResponse;
+  const data = (await res.json()) as any;
 
-  // Transform the complex API response into a simplified restaurant array
-  return data.results.map((item) => {
-    const venue = item.venue;
-    console.log(`venue: ${JSON.stringify(venue)}`);
-    let imageUrl: string | undefined;
+  return data.results
+    .map((item: any) => {
+      if (!item || !item.venue || !item.venue.id || !item.venue.id.resy) {
+        console.warn("Skipping invalid venue:", item);
+        return null;
+      }
 
-    // Try to get first image if available
-    if (venue.responsive_images?.file_names?.length && venue.responsive_images.urls) {
-      const firstImageKey = venue.responsive_images.file_names[0];
-      imageUrl = venue.responsive_images.urls[firstImageKey]?.["1:1"]?.["400"];
-    }
+      const slots = item.slots ?? [];
 
-    // Get the default template
-    const template = venue.default_template || "";
-
-    console.log(`template: ${template}`);
-
-    return {
-      id: venue.id.resy,
-      name: venue.name,
-      type: venue.type,
-      description: data.templates?.[template]?.content?.["en-us"]?.about?.body || "",
-      priceRange: venue.price_range,
-      neighborhood: venue.location?.neighborhood || "",
-      rating: venue.rating || 0,
-      totalRatings: venue.total_ratings || 0,
-      urlSlug: venue.url_slug,
-      imageUrl,
-    };
-  });
+      return {
+        id: item.venue.id.resy,
+        name: item.venue.name,
+        type: item.venue.type,
+        description: item.venue.content?.[0]?.body || null,
+        priceRange: item.venue.price_range,
+        neighborhood: item.venue.location?.neighborhood || "Unknown",
+        rating: item.venue.rating || 0,
+        totalRatings: item.venue.total_ratings || 0,
+        location: {
+          lat: item.venue.location?.geo?.lat || 0,
+          lon: item.venue.location?.geo?.lon || 0,
+        },
+        slots: slots.map((slot: any) => ({
+          start: slot.date.start,
+          end: slot.date.end,
+          type: slot.config.type,
+          booking_token: slot.config.token,
+        })),
+      };
+    })
+    .filter(Boolean);
 }
