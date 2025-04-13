@@ -45,8 +45,10 @@ definition:
   graphql:
     rootFieldName: get_city_code
     rootFieldKind: Query
-  description: This function takes a pair of coordinates, and returns a city code
-    from the Resy API.
+  description: |
+      This function takes in a latitude and longitude and returns a city code from Resy.
+      It should be used before the get_restaurants function to determine the city code for a user's
+      desired city.
 
 ---
 kind: CommandPermissions

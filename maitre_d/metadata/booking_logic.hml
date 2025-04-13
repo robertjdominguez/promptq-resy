@@ -15,13 +15,6 @@ definition:
     version: v0.1
     schema:
       scalar_types:
-        Boolean:
-          representation:
-            type: boolean
-          aggregate_functions: {}
-          comparison_operators:
-            _eq:
-              type: equal
         Float:
           representation:
             type: float64
@@ -53,99 +46,35 @@ definition:
               type:
                 name: Float
                 type: named
-        QueryInfo:
+        Restaurant:
           fields:
-            day:
-              type:
-                name: String
-                type: named
-            limit:
-              type:
-                type: nullable
-                underlying_type:
-                  name: Float
-                  type: named
-            location_id:
-              type:
-                name: String
-                type: named
-            party_size:
-              type:
-                name: Float
-                type: named
-            time_filter:
-              type:
-                type: nullable
-                underlying_type:
-                  name: String
-                  type: named
-            url_slug:
-              type:
-                type: nullable
-                underlying_type:
-                  name: String
-                  type: named
-        ResySuggestionResponse:
-          fields:
-            query:
-              type:
-                name: QueryInfo
-                type: named
-            results:
-              type:
-                element_type:
-                  name: ResySuggestionResult
-                  type: named
-                type: array
-        ResySuggestionResult:
-          fields:
-            venue:
-              type:
-                name: Venue
-                type: named
-        Venue:
-          fields:
-            average_bill_size:
-              type:
-                name: Float
-                type: named
-            currency_symbol:
-              type:
-                name: String
-                type: named
-            hospitality_included:
-              type:
-                name: Float
-                type: named
             id:
               type:
-                name: Venue_id
-                type: named
-            is_gdc:
-              type:
                 name: Float
                 type: named
-            is_global_dining_access:
+            imageUrl:
               type:
-                name: Boolean
-                type: named
-            is_global_dining_access_only:
-              type:
-                name: Boolean
-                type: named
+                type: nullable
+                underlying_type:
+                  name: String
+                  type: named
             name:
               type:
                 name: String
                 type: named
-            price_range:
+            neighborhood:
+              type:
+                name: String
+                type: named
+            priceRange:
               type:
                 name: Float
                 type: named
-            requires_reservation_transfers:
+            rating:
               type:
                 name: Float
                 type: named
-            resy_select:
+            totalRatings:
               type:
                 name: Float
                 type: named
@@ -153,36 +82,10 @@ definition:
               type:
                 name: String
                 type: named
-            url_slug:
+            urlSlug:
               type:
                 name: String
                 type: named
-            venue_group:
-              type:
-                name: VenueGroup
-                type: named
-        Venue_id:
-          fields:
-            resy:
-              type:
-                name: Float
-                type: named
-        VenueGroup:
-          fields:
-            id:
-              type:
-                name: Float
-                type: named
-            name:
-              type:
-                name: String
-                type: named
-            venues:
-              type:
-                element_type:
-                  name: Float
-                  type: named
-                type: array
       collections: []
       functions:
         - name: getLatLon
@@ -209,10 +112,26 @@ definition:
             type: named
         - name: getRestaurants
           description: This function takes in a city code, the current date, and a party size to show the list of restaurants with availability.
-          arguments: {}
+          arguments:
+            city_code:
+              type:
+                name: String
+                type: named
+            date:
+              description: '- The date to get the restaurants for in YYYY-MM-DD format'
+              type:
+                name: String
+                type: named
+            party_size:
+              description: '- The party size to get the restaurants for'
+              type:
+                name: String
+                type: named
           result_type:
-            name: ResySuggestionResponse
-            type: named
+            element_type:
+              name: Restaurant
+              type: named
+            type: array
       procedures: []
     capabilities:
       version: 0.1.6

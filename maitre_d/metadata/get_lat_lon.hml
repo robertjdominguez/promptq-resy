@@ -49,8 +49,9 @@ definition:
   graphql:
     rootFieldName: get_lat_lon
     rootFieldKind: Query
-  description: This function fetches the coordinates of a city using the OpenCage
-    Geocoding API.
+  description: |
+      This function takes in a city's name and determines the latitude and longitude for it. It should be used before all other
+      functions to determine the coordinates for a city which can then be used by the get_city_code function.
 
 ---
 kind: CommandPermissions

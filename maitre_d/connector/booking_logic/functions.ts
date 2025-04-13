@@ -4,62 +4,54 @@ interface Coordinates {
 }
 
 interface PartyDetails {
-  partySize: number;
+  partySize: string;
   date: string;
   cityCode: string;
 }
-
-type QueryInfo = {
-  location_id: string;
-  day: string;
-  party_size: number;
-  limit?: number;
-  time_filter?: string | null;
-  url_slug?: string | null;
-};
-
-type VenueGroup = {
-  id: number;
-  name: string;
-  venues: number[];
-};
-
-type Venue = {
-  id: { resy: number };
-  name: string;
-  type: string;
-  url_slug: string;
-  price_range: number;
-  average_bill_size: number;
-  currency_symbol: string;
-  hospitality_included: number;
-  resy_select: number;
-  is_gdc: number;
-  is_global_dining_access: boolean;
-  is_global_dining_access_only: boolean;
-  requires_reservation_transfers: number;
-  venue_group: VenueGroup;
-};
-
-type ResySuggestionResult = {
-  venue: Venue;
-};
-
-type ResySuggestionResponse = {
-  query: QueryInfo;
-  results: ResySuggestionResult[];
-};
 
 interface Restaurant {
   id: number;
   name: string;
   type: string;
-  price_range: number;
-  average_bill_size: number;
-  rating: number;
-  total_ratings: number;
+  priceRange: number;
   neighborhood: string;
-  image_url: string;
+  rating: number;
+  totalRatings: number;
+  urlSlug: string;
+  imageUrl?: string;
+}
+
+interface ResySuggestionResponse {
+  query: {
+    location_id: string;
+    day: string;
+    party_size: string;
+  };
+  results: Array<{
+    venue: {
+      id: { resy: number };
+      name: string;
+      type: string;
+      price_range: number;
+      rating?: number;
+      total_ratings?: number;
+      url_slug: string;
+      location?: {
+        neighborhood?: string;
+      };
+      responsive_images?: {
+        urls?: Record<
+          string,
+          {
+            "1:1"?: {
+              "400"?: string;
+            };
+          }
+        >;
+        file_names?: string[];
+      };
+    };
+  }>;
 }
 
 interface CityCode {
@@ -133,47 +125,74 @@ export async function getCityCode(coordinates: Coordinates): Promise<CityCode> {
  * @readonly
  * @param {string} cityCode - The city code to get the restaurants for
  * @param {string} date - The date to get the restaurants for in YYYY-MM-DD format
- * @param {number} partySize - The party size to get the restaurants for
+ * @param {number} party_size - The party size to get the restaurants for
  * @returns {Promise<Restaurant[]>} - A promise that resolves to an array of restaurants
  */
-export async function getRestaurants(): Promise<ResySuggestionResponse> {
+export async function getRestaurants(city_code: string, date: string, party_size: string): Promise<Restaurant[]> {
   // Check for environment variables
-  if (!process.env.RESY_API_KEY) {
-    throw new Error("Missing Resy API key");
-  }
-  if (!process.env.RESY_COOKIE) {
-    throw new Error("Missing Resy cookie");
-  }
-  if (!process.env.RESY_AUTH_TOKEN) {
-    throw new Error("Missing Resy auth token");
+  const requiredEnvVars = ["RESY_API_KEY", "RESY_COOKIE", "RESY_AUTH_TOKEN"];
+  for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+      throw new Error(`Missing ${envVar}`);
+    }
   }
 
-  const res = await fetch("https://api.resy.com/3/collection/suggestions?location_id=sf&day=2025-04-12&party_size=3", {
-    headers: {
-      authority: "api.resy.com",
-      accept: "application/json, text/plain, */*",
-      "accept-language": "en-US,en;q=0.9,la;q=0.8",
-      authorization: `ResyAPI api_key="${process.env.RESY_API_KEY}"`,
-      "cache-control": "no-cache",
-      origin: "https://resy.com",
-      referer: "https://resy.com/",
-      "sec-ch-ua": '"Chromium";v="118", "Google Chrome";v="118", "Not=A?Brand";v="99"',
-      "sec-ch-ua-mobile": "?0",
-      "sec-ch-ua-platform": '"macOS"',
-      "sec-fetch-dest": "empty",
-      "sec-fetch-mode": "cors",
-      "sec-fetch-site": "same-site",
-      "user-agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
-      "x-origin": "https://resy.com",
-      "x-resy-auth-token": process.env.RESY_AUTH_TOKEN,
-      cookie: process.env.RESY_COOKIE,
-    },
-  });
+  const apiKey = process.env.RESY_API_KEY!;
+  const authToken = process.env.RESY_AUTH_TOKEN!;
+  const cookie = process.env.RESY_COOKIE!;
+
+  const url = `https://api.resy.com/3/collection/suggestions?location_id=${city_code}&day=${date}&party_size=${party_size}`;
+
+  const headers = {
+    authority: "api.resy.com",
+    accept: "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.9,la;q=0.8",
+    authorization: `ResyAPI api_key="${apiKey}"`,
+    "cache-control": "no-cache",
+    origin: "https://resy.com",
+    referer: "https://resy.com/",
+    "sec-ch-ua": '"Chromium";v="118", "Google Chrome";v="118", "Not=A?Brand";v="99"',
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"macOS"',
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-site",
+    "user-agent":
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+    "x-origin": "https://resy.com",
+    "x-resy-auth-token": authToken,
+    cookie: cookie,
+  };
+
+  const res = await fetch(url, { headers });
 
   if (!res.ok) {
     throw new Error(`Failed to fetch: ${res.status}`);
   }
 
-  return (await res.json()) as ResySuggestionResponse;
+  const data = (await res.json()) as ResySuggestionResponse;
+
+  // Transform the complex API response into a simplified restaurant array
+  return data.results.map((item) => {
+    const venue = item.venue;
+    let imageUrl: string | undefined;
+
+    // Try to get first image if available
+    if (venue.responsive_images?.file_names?.length && venue.responsive_images.urls) {
+      const firstImageKey = venue.responsive_images.file_names[0];
+      imageUrl = venue.responsive_images.urls[firstImageKey]?.["1:1"]?.["400"];
+    }
+
+    return {
+      id: venue.id.resy,
+      name: venue.name,
+      type: venue.type,
+      priceRange: venue.price_range,
+      neighborhood: venue.location?.neighborhood || "",
+      rating: venue.rating || 0,
+      totalRatings: venue.total_ratings || 0,
+      urlSlug: venue.url_slug,
+      imageUrl,
+    };
+  });
 }
