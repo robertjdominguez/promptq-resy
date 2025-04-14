@@ -71,3 +71,10 @@ export async function validateUser(email: string, password: string): Promise<Val
 		};
 	}
 }
+
+export function jsonResponse(body: object, status: number): Response {
+	return new Response(JSON.stringify(body), {
+		status,
+		headers: { 'Content-Type': 'application/json' },
+	});
+}
