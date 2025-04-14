@@ -1,0 +1,78 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: booking_response
+  fields:
+    - name: success
+      type: Boolean!
+    - name: token
+      type: String!
+  graphql:
+    typeName: booking_response
+    inputTypeName: booking_response_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: BookingResponse
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: booking_response
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - success
+          - token
+    - role: user
+      output:
+        allowedFields:
+          - success
+          - token
+
+---
+kind: Command
+version: v1
+definition:
+  name: make_booking
+  outputType: booking_response!
+  arguments:
+    - name: auth_token
+      type: String!
+      description: — This is unique to each user and is contained in their public_user
+        record
+    - name: date
+      type: String!
+      description: "- The date to make the booking for in YYYY-MM-DD format"
+    - name: party_size
+      type: String!
+      description: "- The party size to make the booking config for"
+    - name: payment_id
+      type: String!
+      description: — This is the payment method ID and is unique to each user also
+        found in their public_user record
+    - name: slot_id
+      type: String!
+      description: "- The slot ID to get the booking config for; this looks like
+        rgs://resy/701/2791420/2/2025-04-17/2025-04-17/20:30:00/3/Dining Room"
+  source:
+    dataConnectorName: booking_logic
+    dataConnectorCommand:
+      procedure: makeBooking
+  graphql:
+    rootFieldName: make_booking
+    rootFieldKind: Mutation
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: make_booking
+  permissions:
+    - role: admin
+      allowExecution: true
+    - role: user
+      allowExecution: true
+

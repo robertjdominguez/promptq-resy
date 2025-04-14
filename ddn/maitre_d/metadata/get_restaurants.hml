@@ -1,0 +1,209 @@
+---
+kind: ObjectType
+version: v1
+definition:
+  name: venue_info_location
+  fields:
+    - name: lat
+      type: Float!
+    - name: lon
+      type: Float!
+  graphql:
+    typeName: venue_info_location
+    inputTypeName: venue_info_location_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: VenueInfo_location
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: venue_info_location
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - lat
+          - lon
+    - role: user
+      output:
+        allowedFields:
+          - lat
+          - lon
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: array
+  fields:
+    - name: end
+      type: String!
+    - name: slot_id
+      type: String!
+    - name: start
+      type: String!
+    - name: type
+      type: String!
+  graphql:
+    typeName: array
+    inputTypeName: array_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: array
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: array
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - end
+          - slot_id
+          - start
+          - type
+    - role: user
+      output:
+        allowedFields:
+          - end
+          - slot_id
+          - start
+          - type
+
+---
+kind: ObjectType
+version: v1
+definition:
+  name: venue_info
+  fields:
+    - name: description
+      type: String
+    - name: id
+      type: Float!
+    - name: location
+      type: venue_info_location!
+    - name: name
+      type: String!
+    - name: neighborhood
+      type: String!
+    - name: price_range
+      type: Float!
+    - name: rating
+      type: Float!
+    - name: slots
+      type: "[array!]!"
+    - name: total_ratings
+      type: Float!
+    - name: type
+      type: String!
+  graphql:
+    typeName: venue_info
+    inputTypeName: venue_info_input
+  dataConnectorTypeMapping:
+    - dataConnectorName: booking_logic
+      dataConnectorObjectType: VenueInfo
+      fieldMapping:
+        description:
+          column:
+            name: description
+        id:
+          column:
+            name: id
+        location:
+          column:
+            name: location
+        name:
+          column:
+            name: name
+        neighborhood:
+          column:
+            name: neighborhood
+        price_range:
+          column:
+            name: priceRange
+        rating:
+          column:
+            name: rating
+        slots:
+          column:
+            name: slots
+        total_ratings:
+          column:
+            name: totalRatings
+        type:
+          column:
+            name: type
+
+---
+kind: TypePermissions
+version: v1
+definition:
+  typeName: venue_info
+  permissions:
+    - role: admin
+      output:
+        allowedFields:
+          - description
+          - id
+          - location
+          - name
+          - neighborhood
+          - price_range
+          - rating
+          - slots
+          - total_ratings
+          - type
+    - role: user
+      output:
+        allowedFields:
+          - description
+          - id
+          - location
+          - name
+          - neighborhood
+          - price_range
+          - rating
+          - slots
+          - total_ratings
+          - type
+
+---
+kind: Command
+version: v1
+definition:
+  name: get_restaurants
+  outputType: "[venue_info!]!"
+  arguments:
+    - name: city_code
+      type: String!
+    - name: date
+      type: String!
+      description: "- The date to get the restaurants for in YYYY-MM-DD format"
+    - name: party_size
+      type: String!
+      description: "- The party size to get the restaurants for"
+  source:
+    dataConnectorName: booking_logic
+    dataConnectorCommand:
+      function: getRestaurants
+  graphql:
+    rootFieldName: get_restaurants
+    rootFieldKind: Query
+  description: This function takes in a city code, the current date, and a party
+    size to show the list of restaurants with availability.
+
+---
+kind: CommandPermissions
+version: v1
+definition:
+  commandName: get_restaurants
+  permissions:
+    - role: admin
+      allowExecution: true
+    - role: user
+      allowExecution: true
+

@@ -1,0 +1,223 @@
+kind: DataConnectorLink
+version: v1
+definition:
+  name: booking_logic
+  url:
+    readWriteUrls:
+      read:
+        valueFromEnv: MAITRE_D_BOOKING_LOGIC_READ_URL
+      write:
+        valueFromEnv: MAITRE_D_BOOKING_LOGIC_WRITE_URL
+  headers:
+    Authorization:
+      valueFromEnv: MAITRE_D_BOOKING_LOGIC_AUTHORIZATION_HEADER
+  schema:
+    version: v0.1
+    schema:
+      scalar_types:
+        Boolean:
+          representation:
+            type: boolean
+          aggregate_functions: {}
+          comparison_operators:
+            _eq:
+              type: equal
+        Float:
+          representation:
+            type: float64
+          aggregate_functions: {}
+          comparison_operators:
+            _eq:
+              type: equal
+        String:
+          representation:
+            type: string
+          aggregate_functions: {}
+          comparison_operators:
+            _eq:
+              type: equal
+      object_types:
+        BookingResponse:
+          fields:
+            success:
+              type:
+                name: Boolean
+                type: named
+            token:
+              type:
+                name: String
+                type: named
+        CityCode:
+          fields:
+            code:
+              type:
+                name: String
+                type: named
+        Coordinates:
+          fields:
+            lat:
+              type:
+                name: Float
+                type: named
+            lon:
+              type:
+                name: Float
+                type: named
+        VenueInfo:
+          fields:
+            description:
+              type:
+                type: nullable
+                underlying_type:
+                  name: String
+                  type: named
+            id:
+              type:
+                name: Float
+                type: named
+            location:
+              type:
+                name: VenueInfo_location
+                type: named
+            name:
+              type:
+                name: String
+                type: named
+            neighborhood:
+              type:
+                name: String
+                type: named
+            priceRange:
+              type:
+                name: Float
+                type: named
+            rating:
+              type:
+                name: Float
+                type: named
+            slots:
+              type:
+                element_type:
+                  name: array
+                  type: named
+                type: array
+            totalRatings:
+              type:
+                name: Float
+                type: named
+            type:
+              type:
+                name: String
+                type: named
+        VenueInfo_location:
+          fields:
+            lat:
+              type:
+                name: Float
+                type: named
+            lon:
+              type:
+                name: Float
+                type: named
+        array:
+          fields:
+            end:
+              type:
+                name: String
+                type: named
+            slot_id:
+              type:
+                name: String
+                type: named
+            start:
+              type:
+                name: String
+                type: named
+            type:
+              type:
+                name: String
+                type: named
+      collections: []
+      functions:
+        - name: getLatLon
+          description: This function fetches the coordinates of a city using the OpenCage Geocoding API.
+          arguments:
+            city:
+              description: '- The city to get the coordinates for'
+              type:
+                name: String
+                type: named
+          result_type:
+            name: Coordinates
+            type: named
+        - name: getCityCode
+          description: This function takes a pair of coordinates, and returns a city code from the Resy API.
+          arguments:
+            coordinates:
+              description: '- The coordinates to get the city code for'
+              type:
+                name: Coordinates
+                type: named
+          result_type:
+            name: CityCode
+            type: named
+        - name: getRestaurants
+          description: This function takes in a city code, the current date, and a party size to show the list of restaurants with availability.
+          arguments:
+            city_code:
+              type:
+                name: String
+                type: named
+            date:
+              description: '- The date to get the restaurants for in YYYY-MM-DD format'
+              type:
+                name: String
+                type: named
+            party_size:
+              description: '- The party size to get the restaurants for'
+              type:
+                name: String
+                type: named
+          result_type:
+            element_type:
+              name: VenueInfo
+              type: named
+            type: array
+      procedures:
+        - name: makeBooking
+          arguments:
+            auth_token:
+              description: — This is unique to each user and is contained in their public_user record
+              type:
+                name: String
+                type: named
+            date:
+              description: '- The date to make the booking for in YYYY-MM-DD format'
+              type:
+                name: String
+                type: named
+            party_size:
+              description: '- The party size to make the booking config for'
+              type:
+                name: String
+                type: named
+            payment_id:
+              description: — This is the payment method ID and is unique to each user also found in their public_user record
+              type:
+                name: String
+                type: named
+            slot_id:
+              description: '- The slot ID to get the booking config for; this looks like rgs://resy/701/2791420/2/2025-04-17/2025-04-17/20:30:00/3/Dining Room'
+              type:
+                name: String
+                type: named
+          result_type:
+            name: BookingResponse
+            type: named
+    capabilities:
+      version: 0.1.6
+      capabilities:
+        query:
+          variables: {}
+          nested_fields: {}
+        mutation: {}
