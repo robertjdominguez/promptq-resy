@@ -2,8 +2,8 @@
 
 ## Overview
 
-PromptQ-Resy is a project that allows you to make restaurant reservations using the Resy API. It uses the PromptQL
-service to provide a conversational interface for making reservations. The project is built using Hasura and the Resy
+PromptQ-Resy is a project that allows you to make restaurant reservations using the Resy API. It uses the [PromptQL
+service](https://hasura.io/promptql) to provide a conversational interface for making reservations. The project is built using Hasura and the (undocumented) Resy
 API. It is designed to be easy to use and provides a simple way to make reservations at your favorite restaurants or
 when exploring a new city.
 
@@ -11,15 +11,15 @@ when exploring a new city.
 
 ### Step 1. Get your credentials from Resy
 
-### `payment_id`
+### `payment_method`
 
-You'll need to find your payment ID. This is a little tricky, but not too bad. In the Network tab, find the request
-that's made after you authenticate to Resy. You can search for `user` in the requests and find the one that has your
+You'll need to find your payment method. This is a little tricky, but not too bad. In the Network tab, find the request
+that's made after you [authenticate to Resy](https://resy.com). You can search for `user` in the requests and find the one that has your
 user information. `payment_method` is in there as an object and has a field of `id`. That's what you want.
 
 ### Auth Token
 
-This is easier to find. You can head to Application > Cookies > https://resy.com and find the `authToken` cookie.
+This is easier to find. You can head to Application > Cookies > `https://resy.com` and find the `authToken` cookie.
 
 ### Step 2. Get your credentials from our auth service
 
