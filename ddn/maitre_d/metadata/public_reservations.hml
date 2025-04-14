@@ -12,6 +12,7 @@ definition:
       type: uuid!
     - name: venue_id
       type: text!
+      description: The name of the restaurant...not the venue_id
   graphql:
     typeName: public_reservations
     inputTypeName: public_reservations_input

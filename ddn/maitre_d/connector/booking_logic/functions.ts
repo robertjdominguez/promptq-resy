@@ -1,7 +1,13 @@
 import FormData from "form-data";
 import axios from "axios";
+import { Pool } from "pg";
 import { finalConfig, getBookToken } from "./utils/config";
 import { Coordinates, VenueInfo, CityCode, BookingResponse } from "./utils/types";
+
+const pool = new Pool({
+  connectionString: process.env.PG_CONNECTION_URI,
+  ssl: { rejectUnauthorized: false }, // optional, based on your PG setup
+});
 
 /**
  *
@@ -147,7 +153,11 @@ export async function getRestaurants(city_code: string, date: string, party_size
 
 /**
  *
+ * @description You should use this function when booking a reservation. One parameter that will be needed inside of it is notes for the reservation. You should make something up based on the restaurant's description and the conversation with the user that led to the reservation.
+ *
  * @param {string} slot_id - The slot ID to get the booking config for; this looks like rgs://resy/701/2791420/2/2025-04-17/2025-04-17/20:30:00/3/Dining Room
+ * @param {string} user_id - The user ID to make the booking for; this is the unique identifier for the user in the Resy system
+ * @param {string} restaurant_name - The name of the restaurant to make the booking for
  * @param {string} date - The date to make the booking for in YYYY-MM-DD format
  * @param {string} party_size - The party size to make the booking config for
  * @param {string} auth_token — This is unique to each user and is contained in their public_user record
@@ -156,6 +166,8 @@ export async function getRestaurants(city_code: string, date: string, party_size
  */
 export async function makeBooking(
   slot_id: string,
+  user_id: string,
+  restaurant_name: string,
   date: string,
   party_size: string,
   auth_token: string,
@@ -178,7 +190,17 @@ export async function makeBooking(
 
     console.log(response.data);
 
-    // TODO: Add the record into the database
+    // 🗃 Insert into reservations table
+    const client = await pool.connect();
+    try {
+      await client.query(
+        `INSERT INTO reservations (user_id, venue_id, notes)
+         VALUES ($1, $2, $3)`,
+        [user_id, restaurant_name, ""]
+      );
+    } finally {
+      client.release();
+    }
 
     return {
       token: response.data.resy_token,

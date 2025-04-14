@@ -53,10 +53,17 @@ definition:
       type: String!
       description: — This is the payment method ID and is unique to each user also
         found in their public_user record
+    - name: restaurant_name
+      type: String!
+      description: "- The name of the restaurant to make the booking for"
     - name: slot_id
       type: String!
       description: "- The slot ID to get the booking config for; this looks like
         rgs://resy/701/2791420/2/2025-04-17/2025-04-17/20:30:00/3/Dining Room"
+    - name: user_id
+      type: String!
+      description: "- The user ID to make the booking for; this is the unique
+        identifier for the user in the Resy system"
   source:
     dataConnectorName: booking_logic
     dataConnectorCommand:
