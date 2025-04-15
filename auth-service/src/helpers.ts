@@ -21,7 +21,7 @@ export function generateToken(userId: string, email: string): string {
 				},
 			},
 			process.env.JWT_SECRET || '',
-			{ expiresIn: '1d' },
+			{ expiresIn: '30d' },
 		);
 	} catch (err) {
 		console.error('Token generation error:', err);

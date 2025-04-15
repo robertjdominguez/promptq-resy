@@ -34,7 +34,7 @@ curl -X POST https://auth-service.hasura.workers.dev/signup \
   }'
 ```
 
-This will return a JWT which you can use to authenticate to the PromptQL service. **Your JWT is good for one day.** If
+This will return a JWT which you can use to authenticate to the PromptQL service. **Your JWT is good for thirty days.** If
 you need to regenerate one, use the `signin` endpoint instead of `signup` and use the same email and password you used
 in the previous step.
 
